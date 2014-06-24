@@ -14,7 +14,7 @@ except ImportError:
 
 setup(
     name='sea_cli',
-    version='0.0.1',
+    version='0.0.2',
     entry_points={
         'console_scripts': [
             'sea=sea_cli.sea:main',]
