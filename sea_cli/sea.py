@@ -124,12 +124,17 @@ def get_file_descriptor(path, mode):
         import zipfile
         return zipfile.ZipFile(path, mode + 'b' if mode in ('r', 'w') else mode)
     else:
-        return open(path, mode)                
+        return open(path, mode + 'U' if mode == 'r' else mode)                
 
 #-------------------------------------------------------------------------------
 
 
-def write_table(table, o):
+def write_table(smiles, table, o):
+    if o:
+        o.write('\n%s\n\n' % smiles)
+    else:
+        print '\n%s\n' % smiles
+
     for row in table:
         if o:
             o.write('\t'.join(row) + '\n') 
@@ -138,7 +143,7 @@ def write_table(table, o):
     if o:
         o.write('\n####\n')
     else:
-        print ('\n####')             
+        print '\n####'            
 
 #-------------------------------------------------------------------------------
 
@@ -194,15 +199,15 @@ def main():
                 smitxt += get_smiles_id_pair(chunk)   
             else:
                 table = get_similarity(smitxt, descriptor, reference, orderby, sort)
-                write_table(table, o)
+                write_table(chunk, table, o)
                 smitxt = ''
         if smitxt:
             table = get_similarity(smitxt, descriptor, reference, orderby, sort)
-            write_table(table, o)            
+            write_table(chunk, table, o)            
     elif len(args) == 1:
         smitxt = get_smiles_id_pair(args[0])
         table = get_similarity(smitxt, descriptor, reference, orderby, sort)
-        write_table(table, o)
+        write_table(args[0], table, o)
     else:
         parser.print_help()   
         sys.exit(1)
